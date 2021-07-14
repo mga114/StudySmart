@@ -1,0 +1,5 @@
+day,dayNum,time,courseCode,courseDesciption,courseType
+monday,0,10am,COSC265,Relational Database Systems,Lecture
+monday,0,11am,EMTH211,Engineering Linear Algebra and Stats,Lecture
+monday,0,12pm,ENCE260,Computer Systems,Lecture
+monday,0,4pm,SENG202,Engineering Project Workshop,Lecture

@@ -1,0 +1,136 @@
+body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+small{
+    font-size: 1.5vw;
+    color: rgba(0, 0, 0, .4);
+}
+
+.display{
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    justify-content: center;
+    align-content: center;
+}
+
+.display div{
+    text-align: center;
+}
+
+.display p{
+    font-size: 4vw;
+    margin-bottom: 0px;
+    margin-top: 1vw;
+}
+
+.curr-earned p{
+    color: greenyellow;
+}
+
+.main-body{
+    margin-top: 3vw;
+    display: flex;
+}
+
+.main-body .calender{
+    flex: 3;
+    margin: 2vw;
+    border-style: solid;
+    border-radius: 1vw;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(6, 11vw);
+    grid-template-rows: repeat(14, 5vw);
+}
+
+.main-body .study-timer{
+    flex: 1;
+    margin: 2vw;
+    border-style: solid;
+    border-radius: 1vw;
+}
+
+.main-body .calender div{
+    border-style:groove;
+    border-radius: 0.2vw;
+    background-color: rgba(0, 0, 0, 0.3);
+    justify-content: center;
+    align-content: center;
+    font-size: 2vw;
+    padding: 1vw;
+}
+
+.main-body .calender .calender-slot{
+    background-color: white;
+    padding:0.1vw;
+    font-size:1vw;
+    
+}
+
+.main-body .calender .calender-slot .slot-layer1{
+    border-style: none;
+    background-color: white;
+    font-size: 1vw;
+    display:flex;
+    justify-content: left;
+    align-content: left;
+    padding: 0;
+    margin:0;
+    
+}
+
+.course-title{
+    flex:10;
+    margin-bottom:0.1vw;
+    margin-top:0.2vw;
+}
+
+.clear-calender{
+    flex:1;
+    margin-bottom:0.1vw;
+    margin-top:0.2vw;
+    cursor:pointer;
+    border:none;
+    outline:none;
+    background-color:white;
+}
+
+.course-label{
+    margin:0;
+    font-size: 0.7vw;
+}
+
+.main-body .calender .calender-slot .slot-layer2{
+    border-style: none;
+    background-color: white;
+    font-size: 0.9vw;
+    display:flex;
+    justify-content: left;
+    align-content: left;
+    padding:0;
+    margin:0;
+    
+}
+
+.main-body .calender .calender-slot .wrapper-class{
+    background-color: white;
+    padding:0;
+    font-size:1vw;
+    border:none;
+    
+}
+
+.course-type{
+    flex:2;
+    margin:0;
+}
+
+.attended{
+    flex:1;
+    margin:0;
+    font-size:0.7vw;
+    cursor:pointer;
+    
+}
