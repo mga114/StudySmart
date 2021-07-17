@@ -113,39 +113,39 @@ class Calender{
 
     addCalenderData(newData){
         //if there is nothing saved then create an empty array
-        if(localStorage.getItem('calenderData') == null){
-            localStorage.setItem('calenderData', '[]');
+        if(Storage.getItem('calenderData') == null){
+            Storage.setItem('calenderData', '[]');
         }
 
         //get old data and add append data to old data if newData not in the array
-        var oldData = JSON.parse(localStorage.getItem('calenderData'));
+        var oldData = JSON.parse(Storage.getItem('calenderData'));
         if (!oldData.includes(newData)){
             oldData.push(newData);
-            localStorage.setItem('calenderData', JSON.stringify(oldData));
+            Storage.setItem('calenderData', JSON.stringify(oldData));
         }
     }
 
 
     //removes stored data from the local storage
     removeCalenderData(toRemove){
-        if(localStorage.getItem('calenderData') == null){
-            localStorage.setItem('calenderData', '[]');
+        if(Storage.getItem('calenderData') == null){
+            Storage.setItem('calenderData', '[]');
         }
 
-        var oldData = JSON.parse(localStorage.getItem('calenderData'));
+        var oldData = JSON.parse(Storage.getItem('calenderData'));
         if(oldData.includes(toRemove)){
             var removeObject = (element) => element = toRemove;
             var removeLocation = oldData.findIndex(removeObject);
             oldData.splice(removeLocation, 1);
-            localStorage.setItem('calenderData', JSON.stringify(oldData));
+            Storage.setItem('calenderData', JSON.stringify(oldData));
         }
     }
 
     updateDisplay(){
-        if(localStorage.getItem('calenderData') == null){
-            localStorage.setItem('calenderData', '[]');
+        if(Storage.getItem('calenderData') == null){
+            Storage.setItem('calenderData', '[]');
         }
-        var calenderData = JSON.parse(localStorage.getItem('calenderData'));
+        var calenderData = JSON.parse(Storage.getItem('calenderData'));
         calenderData.forEach(calender => {
             document.getElementById(calender).setAttribute("style", "background: greenyellow;");
         })
@@ -159,13 +159,13 @@ class Calender{
     }
 
     resetWeek(){
-        if(localStorage.getItem('weekNum') == null){
-            localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek));
+        if(Storage.getItem('weekNum') == null){
+            Storage.setItem('weekNum', JSON.stringify(this.getCurrentWeek));
         }
-        var storedWeekNum = JSON.parse(localStorage.getItem('weekNum'));
+        var storedWeekNum = JSON.parse(Storage.getItem('weekNum'));
         if (storedWeekNum != this.getCurrentWeek){
-            localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek()));
-            localStorage.setItem('calenderData', '[]');
+            Storage.setItem('weekNum', JSON.stringify(this.getCurrentWeek()));
+            Storage.setItem('calenderData', '[]');
         }
     }
 }
@@ -276,39 +276,39 @@ class Reminder{
 
     addReminderData(newData){
         //if there is nothing saved then create an empty array
-        if(localStorage.getItem('reminderData') == null){
-            localStorage.setItem('reminderData', '[]');
+        if(Storage.getItem('reminderData') == null){
+            Storage.setItem('reminderData', '[]');
         }
 
         //get old data and add append data to old data if newData not in the array
-        var oldData = JSON.parse(localStorage.getItem('reminderData'));
+        var oldData = JSON.parse(Storage.getItem('reminderData'));
         if (!oldData.includes(newData)){
             oldData.push(newData);
-            localStorage.setItem('reminderData', JSON.stringify(oldData));
+            Storage.setItem('reminderData', JSON.stringify(oldData));
         }
     }
 
 
     //removes stored data from the local storage
     removeReminderData(toRemove){
-        if(localStorage.getItem('reminderData') == null){
-            localStorage.setItem('reminderData', '[]');
+        if(Storage.getItem('reminderData') == null){
+            Storage.setItem('reminderData', '[]');
         }
 
-        var oldData = JSON.parse(localStorage.getItem('reminderData'));
+        var oldData = JSON.parse(Storage.getItem('reminderData'));
         if(oldData.includes(toRemove)){
             var removeObject = (element) => element = toRemove;
             var removeLocation = oldData.findIndex(removeObject);
             oldData.splice(removeLocation, 1);
-            localStorage.setItem('reminderData', JSON.stringify(oldData));
+            Storage.setItem('reminderData', JSON.stringify(oldData));
         }
     }
 
     updateDisplay(){
-        if(localStorage.getItem('reminderData') == null){
-            localStorage.setItem('reminderData', '[]');
+        if(Storage.getItem('reminderData') == null){
+            Storage.setItem('reminderData', '[]');
         }
-        var reminderData = JSON.parse(localStorage.getItem('reminderData'));
+        var reminderData = JSON.parse(Storage.getItem('reminderData'));
         reminderData.forEach(reminder => {
             document.getElementById(reminder).setAttribute("style", "background: greenyellow;");
         })
