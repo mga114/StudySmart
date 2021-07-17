@@ -67,6 +67,7 @@ class Calender{
     //handles the click of the attended button for each event
     attendedSession(idNum){
         document.getElementById(idNum).setAttribute("style", "background-color: greenyellow;");
+        this.addCalenderData(idNum);
     }
 
 
@@ -74,6 +75,7 @@ class Calender{
     clearSession(idNum){
         var idActual = parseInt(idNum) - (78 * 5);
         document.getElementById(idActual).setAttribute("style", "background-color: white;");
+        this.removeCalenderData(idActual.toString());
     }
 
     //loading calender data
@@ -87,6 +89,8 @@ class Calender{
         events.forEach(event =>{
             this.processEvent(event);
         });
+        this.resetWeek();
+        this.updateDisplay();
     }
 
     processEvent(event){
@@ -106,11 +110,213 @@ class Calender{
         const timeFormatted = eventDetails[2].slice(0, -2) + ":00" + eventDetails[2].slice(-2);
         this.addEvent(idNum, eventDetails[3], timeFormatted, eventDetails[4], eventDetails[5]);
     }
+
+    addCalenderData(newData){
+        //if there is nothing saved then create an empty array
+        if(localStorage.getItem('calenderData') == null){
+            localStorage.setItem('calenderData', '[]');
+        }
+
+        //get old data and add append data to old data if newData not in the array
+        var oldData = JSON.parse(localStorage.getItem('calenderData'));
+        if (!oldData.includes(newData)){
+            oldData.push(newData);
+            localStorage.setItem('calenderData', JSON.stringify(oldData));
+        }
+    }
+
+
+    //removes stored data from the local storage
+    removeCalenderData(toRemove){
+        if(localStorage.getItem('calenderData') == null){
+            localStorage.setItem('calenderData', '[]');
+        }
+
+        var oldData = JSON.parse(localStorage.getItem('calenderData'));
+        if(oldData.includes(toRemove)){
+            var removeObject = (element) => element = toRemove;
+            var removeLocation = oldData.findIndex(removeObject);
+            oldData.splice(removeLocation, 1);
+            localStorage.setItem('calenderData', JSON.stringify(oldData));
+        }
+    }
+
+    updateDisplay(){
+        if(localStorage.getItem('calenderData') == null){
+            localStorage.setItem('calenderData', '[]');
+        }
+        var calenderData = JSON.parse(localStorage.getItem('calenderData'));
+        calenderData.forEach(calender => {
+            document.getElementById(calender).setAttribute("style", "background: greenyellow;");
+        })
+    }
+
+    getCurrentWeek(){
+        todaysDate = new Date();
+        var oneJan = new Date(todaysDate.getFullYear(), 0, 1);
+        var numDays = Math.floor((todaysDate - oneJan) / (24 * 60 * 60 * 1000));
+        return Math.ceil((todaysDate.getDay() + 1 + numDays)/7);
+    }
+
+    resetWeek(){
+        if(localStorage.getItem('weekNum') == null){
+            localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek));
+        }
+        var storedWeekNum = JSON.parse(localStorage.getItem('weekNum'));
+        if (storedWeekNum != this.getCurrentWeek){
+            localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek()));
+            localStorage.setItem('calenderData', '[]');
+        }
+    }
 }
 
 
 
+class Reminder{
+    constructor(){
+        this.year = 2021;
+        this.constructReminders();
+        this.doneReminderButtons = document.querySelectorAll('[data-reminder-button]');
+        this.cancelReminderButtons = document.querySelectorAll('[data-reminder-cancel]');
+    }
 
+    //returns how many days are in the month
+    //https://www.30secondsofcode.org/js/s/days-in-month
+    daysInMonth(year, month){
+        return new Date(year, month, 0).getDate();
+    }
+
+
+    //returns the number of days until a date, input the date as day, month, or returns Infinity if date has already occured
+    getDaysUntil(day, month){
+        const date = new Date();
+        var days = 0;
+        var dMonth = month - date.getMonth();
+        if (dMonth > 0){
+            for (let i=0;i<dMonth;i++){
+                days += this.daysInMonth(this.year, date.getMonth() + i);
+            }
+        } else if (dMonth < 0){
+            return Infinity;
+        } 
+        if ((day - date.getDate()) < 0 && dMonth == 0){
+            return Infinity;
+        }  
+        return days + (day - date.getDate());
+    }
+
+
+    //loads reminder lines from file
+    async loadReminderData(reminderFile, reminderNum){
+        const response = await fetch(reminderFile);
+        const data = await response.text();
+
+        const reminders = data.split('\n').slice(1);
+        this.addReminderComponents(this.sortReminders(reminders), reminderNum);
+    }
+
+    //sorts and formats the reminders
+    sortReminders(reminders){
+        var returning = Array();
+        reminders.forEach(reminder =>{
+            let reminderData = reminder.split(',');
+            reminderData.unshift(this.getDaysUntil(parseInt(reminderData[3]), parseInt(reminderData[4])));
+            returning.push(reminderData);
+        });
+        returning.sort();
+        return returning;
+    }
+
+    addReminderComponents(reminders, reminderNum){
+        const reminderDisplay = document.getElementById("data-display-"+reminderNum.toString());
+        reminderDisplay.innerHTML += 
+            "<p class='reminder-name'>"+reminders[0][1]+"</p>";
+        var i = 0;
+        reminders.forEach(reminder =>{
+            reminderDisplay.innerHTML += 
+                "<div id="+reminderNum.toString() + "-" + i.toString() + " class='reminder'><div class='reminder-top-display'><div class='reminder-type'>"+reminder[3]+"</div><div class='time-remaining'>Due in: "+reminder[0].toString()+" Days</div><button id="+reminderNum.toString() + "-" + (i+1000).toString() + " data-reminder-cancel class='reminder-cancel'>x</button></div><div class='reminder-weight'>Worth "+reminder[6]+"%</div><div class='reminder-bottom-display'><div class='reminder-course-label'>"+reminder[1]+"</div><button id="+reminderNum.toString() + "-" + (i+2000).toString() + " data-reminder-button class='reminder-done'>Done</button></div></div>";
+            i +=1;
+        });
+        this.doneReminderButtons = document.querySelectorAll('[data-reminder-button]');
+        this.cancelReminderButtons = document.querySelectorAll('[data-reminder-cancel]');
+
+        reminder.doneReminderButtons.forEach(button =>{
+            button.addEventListener('click', () => {
+                reminder.reminderDone(button.id);
+            })
+        })
+
+        reminder.cancelReminderButtons.forEach(button =>{
+            button.addEventListener('click', () => {
+                reminder.clearReminder(button.id)
+            })
+        })
+
+        this.updateDisplay();
+    }
+
+    //gets all the reminders and puts them into the website
+    constructReminders(){
+        for(let i=0;i<4;i++){
+            this.loadReminderData("reminder-"+(i+1).toString()+".csv", i+1);
+        }
+        //this.loadReminderData("reminder-1.csv", 1);
+    }
+
+    clearReminder(buttonID){
+        document.getElementById(buttonID.substring(0, 2) + (parseInt(buttonID.slice(2)) - 1000).toString()).setAttribute("style", "background: white;");
+        this.removeReminderData(buttonID.substring(0, 2) + (parseInt(buttonID.slice(2)) - 1000).toString());
+    }
+
+    //changes the reminder to be coloured green and adds completed to local storage
+    reminderDone(buttonID){
+        document.getElementById(buttonID.substring(0, 2) +(parseInt(buttonID.slice(2)) - 2000).toString()).setAttribute("style", "background: greenyellow;");
+        this.addReminderData(buttonID.substring(0, 2) + (parseInt(buttonID.slice(2)) - 2000).toString());
+    }
+
+    addReminderData(newData){
+        //if there is nothing saved then create an empty array
+        if(localStorage.getItem('reminderData') == null){
+            localStorage.setItem('reminderData', '[]');
+        }
+
+        //get old data and add append data to old data if newData not in the array
+        var oldData = JSON.parse(localStorage.getItem('reminderData'));
+        if (!oldData.includes(newData)){
+            oldData.push(newData);
+            localStorage.setItem('reminderData', JSON.stringify(oldData));
+        }
+    }
+
+
+    //removes stored data from the local storage
+    removeReminderData(toRemove){
+        if(localStorage.getItem('reminderData') == null){
+            localStorage.setItem('reminderData', '[]');
+        }
+
+        var oldData = JSON.parse(localStorage.getItem('reminderData'));
+        if(oldData.includes(toRemove)){
+            var removeObject = (element) => element = toRemove;
+            var removeLocation = oldData.findIndex(removeObject);
+            oldData.splice(removeLocation, 1);
+            localStorage.setItem('reminderData', JSON.stringify(oldData));
+        }
+    }
+
+    updateDisplay(){
+        if(localStorage.getItem('reminderData') == null){
+            localStorage.setItem('reminderData', '[]');
+        }
+        var reminderData = JSON.parse(localStorage.getItem('reminderData'));
+        reminderData.forEach(reminder => {
+            document.getElementById(reminder).setAttribute("style", "background: greenyellow;");
+        })
+    }
+}
+
+
+reminder = new Reminder();
 calender = new Calender();
 
 const attendButtons = document.querySelectorAll('[data-attended-button]');
@@ -127,4 +333,3 @@ cancelButtons.forEach(button =>{
         calender.clearSession(button.id);
     })
 })
-

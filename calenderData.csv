@@ -3,3 +3,15 @@ monday,0,10am,COSC265,Relational Database Systems,Lecture
 monday,0,11am,EMTH211,Engineering Linear Algebra and Stats,Lecture
 monday,0,12pm,ENCE260,Computer Systems,Lecture
 monday,0,4pm,SENG202,Engineering Project Workshop,Lecture
+tuesday,1,8am,ENCE260,Computer Systems,Lab
+tuesday,1,9am,ENCE260,Computer Systems,Lab
+tuesday,1,10am,ENCE260,Computer Systems,Lecture
+tuesday,1,11am,EMTH211,Engineering Linear Algebra and Stats,Lecture
+tuesday,1,12pm,SENG202,Software Engineering Project,Lab
+tuedsay,1,1pm,SENG202,Software Engineering Project,Lab
+wednesday,2,10am,EMTH211,Engineering Linear Algebra and Stats,Lecture
+wednesday,2,11am,COSC265,Relational Database Systems,Lecture
+wednesday,2,4pm,SENG202,Software Engineering Project,Lab
+wednesday,2,5pm,SENG202,Software Engineering Project,Lab
+thursday,3,12pm,EMTH211,Engineering Linear Algebra and Stats,Lecture
+friday,4,11am,COSC265,Relational Database Systems,Lecture
