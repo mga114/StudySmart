@@ -175,7 +175,6 @@ class Calender{
         }
         var storedWeekNum = JSON.parse(localStorage.getItem('weekNum'));
         if (storedWeekNum != this.getCurrentWeek()){
-            console.log('trye');
             localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek()));
             localStorage.setItem('calenderData', '[]');
         }
