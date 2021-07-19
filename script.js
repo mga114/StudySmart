@@ -1,3 +1,6 @@
+//WHY DIDNT I COMMENT ANY OF THIS CODE ARGHHHHH
+
+//handles all the elements of the calender aspect
 class Calender{
     constructor(){
         this.calenderDiv = document.getElementById("calender");
@@ -8,13 +11,15 @@ class Calender{
     //constructs 78 elements for the calender, which includes the text areas
     //and buttons and divs and id numbers
     constructHTMLElements(){
-        let counter = 0;
+        let counter = 0; //counter and timeCounter are like row and column counters
         let timeCounter = 0;
         for (let i=0;i < 78; i++){
             if (i % 6 == 0){
+                //if we are at the start of a row create a time display (eg 8:00am)
                 this.constructTimeElement(timeCounter);
                 timeCounter += 1;
             }else {
+                //else create a normal calender slot
                 this.constructCalenderSlot(counter);
                 counter += 1;
             }
@@ -32,22 +37,26 @@ class Calender{
         var cancelCounter = (counter + (78 * 5)).toString(); //cancel button id
         this.calenderDiv.innerHTML += 
         "<div class='calender-slot'><div id="+dblStrCounter+" class='wrapper-class'><div class='slot-layer1'><p id="+strCounter+" class='course-title'></p><button id="+cancelCounter+" data-clear-button class='clear-calender'>x</button></div><p id="+tplStrCounter+" class='course-label'></p><div class='slot-layer2'><p id="+fthStrCounter+" class='course-type'></p><button id="+counter.toString()+" data-attended-button class='attended'>Attended</button></div></div></div>"
-        const pee = document.getElementById(counter + 78);
-        pee.style.visibility = "hidden";
+        //to start with all calender slots should be hidden until we load the data
+        const calenderSlot = document.getElementById(counter + 78);
+        calenderSlot.style.visibility = "hidden";
     }
 
     //constructs time slots for calender
     constructTimeElement(timeCounter){
         if (timeCounter < 4){
+            //handles am times
             var time = timeCounter + 8;
             var timeDisplay = time.toString() + ":00am";
             this.calenderDiv.innerHTML += 
                 "<div class='time-display'>"+timeDisplay+"</div>";
         }else if (timeCounter == 4){
+            //handles 12:00pm (outlier)
             var timeDisplay = "12:00pm";
             this.calenderDiv.innerHTML +=
                 "<div class='time-display'>"+timeDisplay+"</div>";
         }else    {
+            //handles pm time
             var time = timeCounter - 4;
             var timeDisplay = time.toString() + ":00pm";
             this.calenderDiv.innerHTML +=
@@ -58,6 +67,7 @@ class Calender{
 
     //adds an events to the calender
     addEvent(idNum, courseLabel, time, description, type){
+        //unhides the calender slot and changes the appropriate html properties
         document.getElementById((idNum + 78).toString()).style.visibility = "visible";
         document.getElementById((idNum + (78 * 4)).toString()).innerText = courseLabel + "--" + time;
         document.getElementById((idNum + (78 * 2)).toString()).innerText = description;
@@ -93,6 +103,7 @@ class Calender{
         this.updateDisplay();
     }
 
+    //handles the input and adds it to the calender
     processEvent(event){
         const eventDetails = event.split(',');
 
@@ -152,7 +163,7 @@ class Calender{
     }
 
     getCurrentWeek(){
-        todaysDate = new Date();
+        var todaysDate = new Date();
         var oneJan = new Date(todaysDate.getFullYear(), 0, 1);
         var numDays = Math.floor((todaysDate - oneJan) / (24 * 60 * 60 * 1000));
         return Math.ceil((todaysDate.getDay() + 1 + numDays)/7);
@@ -160,10 +171,11 @@ class Calender{
 
     resetWeek(){
         if(localStorage.getItem('weekNum') == null){
-            localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek));
+            localStorage.setItem('weekNum', '0');
         }
         var storedWeekNum = JSON.parse(localStorage.getItem('weekNum'));
-        if (storedWeekNum != this.getCurrentWeek){
+        if (storedWeekNum != this.getCurrentWeek()){
+            console.log('trye');
             localStorage.setItem('weekNum', JSON.stringify(this.getCurrentWeek()));
             localStorage.setItem('calenderData', '[]');
         }
@@ -202,11 +214,12 @@ class Reminder{
         if ((day - date.getDate()) < 0 && dMonth == 0){
             return Infinity;
         }  
-        return days + (day - date.getDate());
+        return days + (day - date.getDate()) - 1;
     }
 
 
-    //loads reminder lines from file
+    //loads reminder lines from file, reminderNum is the column number that 
+    //the data in the file belongs to
     async loadReminderData(reminderFile, reminderNum){
         const response = await fetch(reminderFile);
         const data = await response.text();
@@ -218,39 +231,61 @@ class Reminder{
     //sorts and formats the reminders
     sortReminders(reminders){
         var returning = Array();
+        let i = 0;
         reminders.forEach(reminder =>{
+            //splits into usable data
             let reminderData = reminder.split(',');
+            //adds reminder number and day counter to reminderData
             reminderData.unshift(this.getDaysUntil(parseInt(reminderData[3]), parseInt(reminderData[4])));
-            returning.push(reminderData);
+            reminderData.push(i);
+            if (returning.length == 0){
+                //if returning is empty
+                returning.push(reminderData);
+            }else if (reminderData[0] == Infinity){
+                //add to the end of returning
+                returning.push(reminderData);
+            }else{
+                //loop over the array and find the location i that the reminder should be in
+                let i = 0;
+                while (returning.length > i && returning[i][0] < reminderData[0]){
+                    i += 1;
+                }
+                //insert reminderData into position i of returning array
+                returning.splice(i, 0, reminderData);
+            }
+            i++;
         });
-        returning.sort();
         return returning;
     }
 
+
+    //adds each reminder to the display from an array of reminders
+    //reminderNum is the column to place the reminders in
     addReminderComponents(reminders, reminderNum){
+        //get the required display and add the base html element of the name
         const reminderDisplay = document.getElementById("data-display-"+reminderNum.toString());
         reminderDisplay.innerHTML += 
             "<p class='reminder-name'>"+reminders[0][1]+"</p>";
-        var i = 0;
+        //adds the reminder html elements to the page
         reminders.forEach(reminder =>{
             reminderDisplay.innerHTML += 
-                "<div id="+reminderNum.toString() + "-" + i.toString() + " class='reminder'><div class='reminder-top-display'><div class='reminder-type'>"+reminder[3]+"</div><div class='time-remaining'>Due in: "+reminder[0].toString()+" Days</div><button id="+reminderNum.toString() + "-" + (i+1000).toString() + " data-reminder-cancel class='reminder-cancel'>x</button></div><div class='reminder-weight'>Worth "+reminder[6]+"%</div><div class='reminder-bottom-display'><div class='reminder-course-label'>"+reminder[1]+"</div><button id="+reminderNum.toString() + "-" + (i+2000).toString() + " data-reminder-button class='reminder-done'>Done</button></div></div>";
-            i +=1;
+                "<div id="+reminderNum.toString() + "-" + reminder[reminder.length-1].toString() + " class='reminder'><div class='reminder-top-display'><div class='reminder-type'>"+reminder[3]+"</div><div class='time-remaining'>Due in: "+reminder[0].toString()+" Days</div><button id="+reminderNum.toString() + "-" + (reminder[reminder.length-1]+1000).toString() + " data-reminder-cancel class='reminder-cancel'>x</button></div><div class='reminder-weight'>Worth "+reminder[6]+"%</div><div class='reminder-bottom-display'><div class='reminder-course-label'>"+reminder[1]+"</div><button id="+reminderNum.toString() + "-" + (reminder[reminder.length-1]+2000).toString() + " data-reminder-button class='reminder-done'>Done</button></div></div>";
         });
+        //gets all the created buttons and loops over them for input handling
         this.doneReminderButtons = document.querySelectorAll('[data-reminder-button]');
         this.cancelReminderButtons = document.querySelectorAll('[data-reminder-cancel]');
 
         reminder.doneReminderButtons.forEach(button =>{
             button.addEventListener('click', () => {
                 reminder.reminderDone(button.id);
-            })
-        })
+            });
+        });
 
         reminder.cancelReminderButtons.forEach(button =>{
             button.addEventListener('click', () => {
                 reminder.clearReminder(button.id)
-            })
-        })
+            });
+        });
 
         this.updateDisplay();
     }
@@ -333,3 +368,13 @@ cancelButtons.forEach(button =>{
         calender.clearSession(button.id);
     })
 })
+
+//handles the top display days remaining counter
+const daysRemainingElement = document.getElementById('days-left');
+//change endDate to the appropriate end date for the semester
+const daysLeftInSemester = reminder.getDaysUntil(31, 9);
+if (daysLeftInSemester >= 0){
+    daysRemainingElement.innerHTML = daysLeftInSemester.toString();
+}else{
+    daysRemainingElement.innerHTML = '-';
+}

@@ -150,8 +150,8 @@ small{
     border-style:solid;
     border-radius: 1vw;
     margin:1vw;
-    justify-content: center;
-    align-content: center;
+    justify-content: top;
+    align-content: top;
     display: grid;
     grid-template-columns: 100%;
 }
