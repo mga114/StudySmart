@@ -145,9 +145,11 @@ class Calender{
 
         var oldData = JSON.parse(localStorage.getItem('calenderData'));
         if(oldData.includes(toRemove)){
-            var removeObject = (element) => element = toRemove;
-            var removeLocation = oldData.findIndex(removeObject);
-            oldData.splice(removeLocation, 1);
+            for (let i=0; i<oldData.length;i++){
+                if(oldData[i] == toRemove){
+                    oldData.splice(i,1);
+                }
+            }
             localStorage.setItem('calenderData', JSON.stringify(oldData));
         }
     }
@@ -331,10 +333,14 @@ class Reminder{
 
         var oldData = JSON.parse(localStorage.getItem('reminderData'));
         if(oldData.includes(toRemove)){
-            var removeObject = (element) => element = toRemove;
-            var removeLocation = oldData.findIndex(removeObject);
-            oldData.splice(removeLocation, 1);
+            //loops over the data array and removes all instances of the required data to remove
+            for(var i=0;i<oldData.length;i++){
+                if (oldData[i] == toRemove){
+                    oldData.splice(i, 1);
+                }
+            }
             localStorage.setItem('reminderData', JSON.stringify(oldData));
+            
         }
     }
 
@@ -344,7 +350,9 @@ class Reminder{
         }
         var reminderData = JSON.parse(localStorage.getItem('reminderData'));
         reminderData.forEach(reminder => {
-            document.getElementById(reminder).setAttribute("style", "background: greenyellow;");
+            if(document.getElementById(reminder)){
+                document.getElementById(reminder).setAttribute("style", "background: greenyellow;");
+            }
         })
     }
 }
