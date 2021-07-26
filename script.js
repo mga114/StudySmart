@@ -215,7 +215,12 @@ class Reminder{
         if ((day - date.getDate()) < 0 && dMonth == 0){
             return Infinity;
         }  
-        return days + (day - date.getDate()) - 1;
+        
+        var toReturn = days + (day - date.getDate()) - 1;
+        if (toReturn < 0){
+            return Infinity;
+        }
+        return toReturn;
     }
 
 
