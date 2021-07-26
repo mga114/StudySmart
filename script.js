@@ -216,7 +216,7 @@ class Reminder{
             return Infinity;
         }  
         
-        var toReturn = days + (day - date.getDate()) - 1;
+        var toReturn = days + (day - date.getDate());
         if (toReturn < 0){
             return Infinity;
         }
